@@ -21,6 +21,15 @@ function initEngine() {
   const glow = document.getElementById('ambient-glow');
   const navbar = document.getElementById('navbar');
 
+  // --- Dimension Caching (Prevents layout thrashing on scroll) ---
+  let overviewHeight = 0;
+  function cacheDimensions() {
+    const container = document.getElementById('overview');
+    if (container) {
+      overviewHeight = container.offsetHeight;
+    }
+  }
+
 
   // --- Animation State ---
   let targetProgress = 0; // Target scroll progress (0 to 1)
@@ -132,7 +141,8 @@ function initEngine() {
       preloader.style.display = 'none';
     }, 1000);
 
-    // Initial sizing and kickstart render loop
+    // Initial sizing, caching, and kickstart render loop
+    cacheDimensions();
     resizeCanvas();
     updateScroll(); // Run immediately to sync initial position
     tick();
@@ -206,14 +216,10 @@ function initEngine() {
     }
   }
 
-  // --- Scroll Tracking Logic ---
+  // --- Scroll Tracking Logic (Ultra-fast, zero layout thrashing) ---
   function updateScroll() {
-    const container = document.getElementById('overview');
-    if (!container) return;
-
-    const rect = container.getBoundingClientRect();
-    const totalScroll = rect.height - window.innerHeight;
-    const currentScroll = -rect.top;
+    const totalScroll = overviewHeight - window.innerHeight;
+    const currentScroll = window.scrollY;
     
     if (totalScroll > 0) {
       targetProgress = Math.min(Math.max(currentScroll / totalScroll, 0), 1);
@@ -325,7 +331,10 @@ function initEngine() {
 
   // --- Event Bindings ---
   window.addEventListener('scroll', updateScroll);
-  window.addEventListener('resize', resizeCanvas);
+  window.addEventListener('resize', () => {
+    cacheDimensions();
+    resizeCanvas();
+  });
 }
 
 // Avoid DOMContentLoaded race conditions by checking readyState
