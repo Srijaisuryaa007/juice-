@@ -48,26 +48,24 @@ function initEngine() {
   let skeletonLoadedCount = 0;
   let experienceStarted = false;
 
-  // Dynamic Lookup for the closest loaded frame to keep scroll rendering O(1)
-  const closestLoadedFrames = new Array(TOTAL_FRAMES + 1).fill(null);
-
+  // Fast O(1) register with zero CPU overhead on image load
   function registerLoadedFrame(frameIndex, img) {
     loadedImages[frameIndex] = img;
+  }
+
+  // Fast outward search to find the closest loaded frame (runs in O(1) time in practice)
+  function getClosestLoadedFrame(target) {
+    if (loadedImages[target]) return target;
     
-    // Update closest loaded frame for all sequence indices
-    for (let i = 1; i <= TOTAL_FRAMES; i++) {
-      let closest = null;
-      let minDiff = Infinity;
-      for (const loadedStr in loadedImages) {
-        const loadedIndex = parseInt(loadedStr, 10);
-        const diff = Math.abs(i - loadedIndex);
-        if (diff < minDiff) {
-          minDiff = diff;
-          closest = loadedIndex;
-        }
-      }
-      closestLoadedFrames[i] = closest;
+    for (let offset = 1; offset < TOTAL_FRAMES; offset++) {
+      const left = target - offset;
+      const right = target + offset;
+      
+      if (left >= 1 && loadedImages[left]) return left;
+      if (right <= TOTAL_FRAMES && loadedImages[right]) return right;
     }
+    
+    return skeletonFrames[0];
   }
 
   // Helper: Pad frame numbers (e.g. 1 -> "001")
@@ -201,7 +199,7 @@ function initEngine() {
     // Force redraw of current frame on resize
     const exactFrame = 1 + currentProgress * (TOTAL_FRAMES - 1);
     const targetFrameIndex = Math.round(exactFrame);
-    const closestFrame = closestLoadedFrames[targetFrameIndex] || skeletonFrames[0];
+    const closestFrame = getClosestLoadedFrame(targetFrameIndex);
     const img = loadedImages[closestFrame];
     if (img) {
       drawImage(img);
@@ -296,7 +294,7 @@ function initEngine() {
     // Map smoothed progress to 300 frame sequence
     const exactFrame = 1 + currentProgress * (TOTAL_FRAMES - 1);
     const targetFrameIndex = Math.round(exactFrame);
-    const closestFrame = closestLoadedFrames[targetFrameIndex] || skeletonFrames[0];
+    const closestFrame = getClosestLoadedFrame(targetFrameIndex);
     
     const img = loadedImages[closestFrame];
     if (img) {
