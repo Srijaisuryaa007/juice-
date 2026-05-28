@@ -286,7 +286,6 @@ p {
   background: radial-gradient(circle, rgba(118, 201, 26, 0.1) 0%, rgba(243, 198, 19, 0.03) 40%, rgba(10, 24, 13, 0) 70%);
   pointer-events: none;
   z-index: 1;
-  transition: transform 0.1s ease-out; /* Subtle parallax */
 }
 
 /* Pinned Canvas */
@@ -319,7 +318,6 @@ p {
   opacity: 0;
   transform: translateY(40px);
   pointer-events: none;
-  transition: opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1), transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .text-beat.active {

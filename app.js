@@ -284,12 +284,12 @@ function initEngine() {
 
   // --- Animation Core Loop (Tick) ---
   function tick() {
-    // Smooth scrolling using Linear Interpolation (lerp)
-    currentProgress += (targetProgress - currentProgress) * 0.08;
+    // Smooth scrolling using Linear Interpolation (lerp) - increased responsiveness (0.15) for a snappier, smoother feel
+    currentProgress += (targetProgress - currentProgress) * 0.15;
     
-    // Smooth mouse parallax transitions
-    mouseX += (targetMouseX - mouseX) * 0.06;
-    mouseY += (targetMouseY - mouseY) * 0.06;
+    // Smooth mouse parallax transitions - increased responsiveness (0.10)
+    mouseX += (targetMouseX - mouseX) * 0.10;
+    mouseY += (targetMouseY - mouseY) * 0.10;
     
     // Map smoothed progress to 300 frame sequence
     const exactFrame = 1 + currentProgress * (TOTAL_FRAMES - 1);
