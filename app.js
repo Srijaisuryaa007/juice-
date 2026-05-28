@@ -331,9 +331,25 @@ function initEngine() {
 
   // --- Event Bindings ---
   window.addEventListener('scroll', updateScroll);
+  
+  let lastWidth = window.innerWidth;
   window.addEventListener('resize', () => {
     cacheDimensions();
-    resizeCanvas();
+    
+    // Only re-allocate canvas size if the width changes (prevents stutters from mobile URL bar collapsing)
+    if (window.innerWidth !== lastWidth) {
+      lastWidth = window.innerWidth;
+      resizeCanvas();
+    } else {
+      // If only height changed (like mobile URL bar collapsing), redraw the current frame on the existing canvas
+      const exactFrame = 1 + currentProgress * (TOTAL_FRAMES - 1);
+      const targetFrameIndex = Math.round(exactFrame);
+      const closestFrame = getClosestLoadedFrame(targetFrameIndex);
+      const img = loadedImages[closestFrame];
+      if (img) {
+        drawImage(img);
+      }
+    }
   });
 }
 
