@@ -5,7 +5,7 @@
 function initEngine() {
   // --- Constants & Config ---
   const TOTAL_FRAMES = 300;
-  const FRAME_STEP = 1; // Load every single frame (300 total) for ultra-detailed scroll sync
+  const SKELETON_STEP = 6; // Load every 6th frame initially for rapid startup
   const BEATS = [
     { id: 'beat-1', start: 0, end: 15 },
     { id: 'beat-2', start: 20, end: 40 },
@@ -31,35 +31,43 @@ function initEngine() {
   let mouseX = 0;
   let mouseY = 0;
 
-  // --- Image Preloading Configuration ---
+  // --- Progressive Image Loader Setup ---
   const loadedImages = {};
-  const framesToLoad = [];
-  
-  for (let i = 1; i <= TOTAL_FRAMES; i += FRAME_STEP) {
-    framesToLoad.push(i);
-  }
-  // Ensure the last frame is always loaded
-  if (!framesToLoad.includes(TOTAL_FRAMES)) {
-    framesToLoad.push(TOTAL_FRAMES);
-  }
+  const skeletonFrames = [];
+  const backgroundFrames = [];
 
-  const totalToLoad = framesToLoad.length;
-  let loadedCount = 0;
-
-  // --- Precompute Closest Frames ---
-  const closestFrames = [];
   for (let i = 1; i <= TOTAL_FRAMES; i++) {
-    let closest = framesToLoad[0];
-    let minDiff = Math.abs(i - closest);
-    for (let j = 1; j < framesToLoad.length; j++) {
-      const f = framesToLoad[j];
-      const diff = Math.abs(i - f);
-      if (diff < minDiff) {
-        minDiff = diff;
-        closest = f;
-      }
+    if (i === 1 || i === TOTAL_FRAMES || (i - 1) % SKELETON_STEP === 0) {
+      skeletonFrames.push(i);
+    } else {
+      backgroundFrames.push(i);
     }
-    closestFrames[i] = closest;
+  }
+
+  const totalSkeleton = skeletonFrames.length;
+  let skeletonLoadedCount = 0;
+  let experienceStarted = false;
+
+  // Dynamic Lookup for the closest loaded frame to keep scroll rendering O(1)
+  const closestLoadedFrames = new Array(TOTAL_FRAMES + 1).fill(null);
+
+  function registerLoadedFrame(frameIndex, img) {
+    loadedImages[frameIndex] = img;
+    
+    // Update closest loaded frame for all sequence indices
+    for (let i = 1; i <= TOTAL_FRAMES; i++) {
+      let closest = null;
+      let minDiff = Infinity;
+      for (const loadedStr in loadedImages) {
+        const loadedIndex = parseInt(loadedStr, 10);
+        const diff = Math.abs(i - loadedIndex);
+        if (diff < minDiff) {
+          minDiff = diff;
+          closest = loadedIndex;
+        }
+      }
+      closestLoadedFrames[i] = closest;
+    }
   }
 
   // Helper: Pad frame numbers (e.g. 1 -> "001")
@@ -77,8 +85,8 @@ function initEngine() {
 
   // --- Preloader Progress Tracker ---
   function checkProgress() {
-    loadedCount++;
-    const percent = Math.round((loadedCount / totalToLoad) * 100);
+    skeletonLoadedCount++;
+    const percent = Math.min(Math.round((skeletonLoadedCount / totalSkeleton) * 100), 100);
     
     const percentEl = document.getElementById('preloader-percent');
     const fillEl = document.getElementById('preloader-fill');
@@ -88,8 +96,34 @@ function initEngine() {
     if (fillEl) fillEl.style.width = `${percent}%`;
     if (statusEl) statusEl.textContent = getStatusMessage(percent);
     
-    if (loadedCount === totalToLoad) {
-      setTimeout(startExperience, 600); // Slight delay for premium feel
+    if (skeletonLoadedCount === totalSkeleton && !experienceStarted) {
+      experienceStarted = true;
+      setTimeout(startExperience, 400); // Fast transition to experience
+    }
+  }
+
+  // --- Sequential Background Loading ---
+  function startBackgroundLoading() {
+    const concurrency = 4;
+    let index = 0;
+    
+    function loadNext() {
+      if (index >= backgroundFrames.length) return;
+      const frameIndex = backgroundFrames[index++];
+      const img = new Image();
+      img.src = `./pics/ezgif-frame-${pad(frameIndex, 3)}.webp`;
+      img.onload = () => {
+        registerLoadedFrame(frameIndex, img);
+        loadNext();
+      };
+      img.onerror = () => {
+        console.error(`Failed to load background frame ${frameIndex}`);
+        loadNext();
+      };
+    }
+    
+    for (let i = 0; i < concurrency; i++) {
+      loadNext();
     }
   }
 
@@ -104,18 +138,21 @@ function initEngine() {
     resizeCanvas();
     updateScroll(); // Run immediately to sync initial position
     tick();
+
+    // Start background image sequence fetching after skeleton has rendered
+    startBackgroundLoading();
   }
 
-  // Start image loads
-  framesToLoad.forEach((index) => {
+  // Start skeleton image loads
+  skeletonFrames.forEach((index) => {
     const img = new Image();
-    img.src = `./pics/ezgif-frame-${pad(index, 3)}.png`;
+    img.src = `./pics/ezgif-frame-${pad(index, 3)}.webp`;
     img.onload = () => {
-      loadedImages[index] = img;
+      registerLoadedFrame(index, img);
       checkProgress();
     };
     img.onerror = () => {
-      console.error(`Failed to load frame ${index}`);
+      console.error(`Failed to load skeleton frame ${index}`);
       checkProgress(); // Keep progress moving even on error
     };
   });
@@ -164,7 +201,7 @@ function initEngine() {
     // Force redraw of current frame on resize
     const exactFrame = 1 + currentProgress * (TOTAL_FRAMES - 1);
     const targetFrameIndex = Math.round(exactFrame);
-    const closestFrame = closestFrames[targetFrameIndex] || framesToLoad[0];
+    const closestFrame = closestLoadedFrames[targetFrameIndex] || skeletonFrames[0];
     const img = loadedImages[closestFrame];
     if (img) {
       drawImage(img);
@@ -259,7 +296,7 @@ function initEngine() {
     // Map smoothed progress to 300 frame sequence
     const exactFrame = 1 + currentProgress * (TOTAL_FRAMES - 1);
     const targetFrameIndex = Math.round(exactFrame);
-    const closestFrame = closestFrames[targetFrameIndex];
+    const closestFrame = closestLoadedFrames[targetFrameIndex] || skeletonFrames[0];
     
     const img = loadedImages[closestFrame];
     if (img) {

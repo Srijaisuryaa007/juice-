@@ -1,0 +1,25 @@
+{
+  "name": "ezgif-660bd0c9ae7c348b-png-split",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "dev": "npx http-server -p 8000",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Srijaisuryaa007/juice-.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Srijaisuryaa007/juice-/issues"
+  },
+  "homepage": "https://github.com/Srijaisuryaa007/juice-#readme",
+  "dependencies": {
+    "sharp": "^0.34.5"
+  }
+}
