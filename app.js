@@ -109,7 +109,7 @@ function initEngine() {
   // Start image loads
   framesToLoad.forEach((index) => {
     const img = new Image();
-    img.src = `./ezgif-frame-${pad(index, 3)}.png`;
+    img.src = `./pics/ezgif-frame-${pad(index, 3)}.png`;
     img.onload = () => {
       loadedImages[index] = img;
       checkProgress();
