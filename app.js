@@ -282,14 +282,25 @@ function initEngine() {
     });
   }
 
+  let lastTime = performance.now();
+
   // --- Animation Core Loop (Tick) ---
-  function tick() {
-    // Smooth scrolling using Linear Interpolation (lerp) - increased responsiveness (0.15) for a snappier, smoother feel
-    currentProgress += (targetProgress - currentProgress) * 0.15;
+  function tick(timestamp) {
+    if (!timestamp) timestamp = performance.now();
+    const dt = (timestamp - lastTime) / 1000; // time delta in seconds
+    lastTime = timestamp;
+
+    // Clamp dt to prevent jumps when tab is inactive or browser lags
+    const clampedDt = Math.min(dt, 0.1);
+
+    // Smooth scrolling using frame-rate independent exponential decay (decay rate 10 matches ~0.15 lerp at 60fps)
+    const decayRateScroll = 10;
+    currentProgress = targetProgress + (currentProgress - targetProgress) * Math.exp(-decayRateScroll * clampedDt);
     
-    // Smooth mouse parallax transitions - increased responsiveness (0.10)
-    mouseX += (targetMouseX - mouseX) * 0.10;
-    mouseY += (targetMouseY - mouseY) * 0.10;
+    // Smooth mouse parallax transitions using frame-rate independent exponential decay
+    const decayRateMouse = 7;
+    mouseX = targetMouseX + (mouseX - targetMouseX) * Math.exp(-decayRateMouse * clampedDt);
+    mouseY = targetMouseY + (mouseY - targetMouseY) * Math.exp(-decayRateMouse * clampedDt);
     
     // Map smoothed progress to 300 frame sequence
     const exactFrame = 1 + currentProgress * (TOTAL_FRAMES - 1);
@@ -308,7 +319,6 @@ function initEngine() {
 
     // Synchronize text overlays with smoothed frame progress
     updateOverlays(currentProgress * 100);
-
 
     requestAnimationFrame(tick);
   }

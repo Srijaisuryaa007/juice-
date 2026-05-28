@@ -297,6 +297,9 @@ p {
   height: 100%;
   z-index: 2;
   display: block;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
 }
 
 /* Overlay Containers for Story beats */
