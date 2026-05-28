@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JUICE | Sparkling Organic Lemonade</title>
+  <meta name="description" content="Experience cinematic scrollytelling with JUICE Sparkling Organic Lemonade. Raw citrus vitality, fresh garden mint, and micro-bubbles in a premium elixir.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ==========================================================================
+       Preloader Overlay
+       ========================================================================== -->
+  <div id="preloader" class="preloader">
+    <div class="preloader-glow"></div>
+    <div class="preloader-content">
+      <div class="preloader-logo">JUICE</div>
+      <div class="preloader-number-wrapper">
+        <div id="preloader-percent" class="preloader-number">00</div>
+      </div>
+      <div class="preloader-bar-bg">
+        <div id="preloader-fill" class="preloader-bar-fill"></div>
+      </div>
+      <div id="preloader-status" class="preloader-status">Harvesting organic lemons...</div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       Navbar (Apple Inspired)
+       ========================================================================== -->
+  <header id="navbar" class="navbar">
+    <a href="#" class="navbar-logo">JUICE</a>
+    <ul class="navbar-links">
+      <li><a href="#overview">Overview</a></li>
+      <li><a href="#sourcing">Sourcing</a></li>
+      <li><a href="#ingredients">Ingredients</a></li>
+      <li><a href="#specs">Nutrition</a></li>
+    </ul>
+    <a href="#order" class="navbar-cta">Experience JUICE</a>
+  </header>
+
+  <!-- ==========================================================================
+       Main Scrollytelling Section
+       ========================================================================== -->
+  <main id="overview" class="scrolly-container">
+    
+    <!-- Sticky viewport that keeps canvas and overlay locked in place -->
+    <div class="sticky-viewport">
+      <div id="ambient-glow" class="ambient-glow"></div>
+      
+      <!-- Canvas for image sequence drawing -->
+      <canvas id="animation-canvas"></canvas>
+
+      <!-- Text Overlay Layer (Synchronized via JS scroll-linked state) -->
+      <div class="overlay-layer">
+        
+        <!-- Beat 1: Hero Intro (0 - 15%) -->
+        <div id="beat-1" class="text-beat beat-hero">
+          <p class="meta">A new standard in refreshment</p>
+          <h1 class="text-gradient">JUICE</h1>
+          <p class="sub">Freshness, carbonated.</p>
+        </div>
+
+        <!-- Beat 2: Squeezing Process (15 - 40%) -->
+        <div id="beat-2" class="text-beat beat-left">
+          <p class="section-label">Cold-Pressed Vitality</p>
+          <h2 class="text-gradient">Pure citrus extraction.</h2>
+          <p>Crafted from hand-selected organic lemons and fresh garden mint. Pressed with hydraulic pressure to preserve live enzymes and nutrients.</p>
+          <p style="margin-top: 12px;">Every batch is chilled immediately, ensuring raw botanical flavor, crisp acidity, and active freshness.</p>
+        </div>
+
+        <!-- Beat 3: Ingredients & Sugar Free (40 - 65%) -->
+        <div id="beat-3" class="text-beat beat-right">
+          <p class="section-label">Clean Formulation</p>
+          <h2 class="text-gradient">Zero compromise. Pure focus.</h2>
+          <p>Naturally sweetened with a touch of raw organic monk fruit. No refined sugars, syrups, or chemical additives.</p>
+          <div class="bullet-points">
+            <div class="bullet-item">
+              <span class="bullet-bullet"></span>
+              <p>100% organic lemons and fresh botanicals.</p>
+            </div>
+            <div class="bullet-item">
+              <span class="bullet-bullet"></span>
+              <p>Antioxidants and natural electrolytes in every sip.</p>
+            </div>
+            <div class="bullet-item">
+              <span class="bullet-bullet"></span>
+              <p>Only 10 calories and 2g of natural fruit sugars per can.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Beat 4: Aromatic Infusion (65 - 85%) -->
+        <div id="beat-4" class="text-beat beat-left">
+          <p class="section-label">Botanical Steeping</p>
+          <h2 class="text-gradient">Garden-fresh mint infusion.</h2>
+          <p>Slow-steeped peppermint and spearmint leaves unlock essential botanical oils and refreshing sensory depth.</p>
+          <p style="margin-top: 12px;">This cooling herbaceous layer balances the tart citrus punch, creating a clean, multidimensional palate experience.</p>
+        </div>
+
+        <!-- Beat 5: Reassembly & Call-to-Action (85 - 100%) -->
+        <div id="beat-5" class="text-beat beat-cta">
+          <h2 class="text-gradient">Taste the energy.<br>Feel the refresh.</h2>
+          <p class="sub">JUICE Sparkling Lemonade. Zero sugar, pure ingredients, infinite focus.</p>
+          <div class="cta-group">
+            <a href="#order" class="btn-primary">Order Online</a>
+            <a href="#specs" class="btn-secondary">
+              Nutrition Facts 
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Scroll trigger space that provides scroll length for the sticky view -->
+    <div class="scroll-spacer"></div>
+
+  </main>
+
+  <!-- ==========================================================================
+       Specifications Grid (Static Content Section)
+       ========================================================================== -->
+  <section id="specs" class="specifications-section">
+    <div class="container">
+      <div class="section-label">Nutrition & Ingredients</div>
+      <h2 class="section-title">An organic breakthrough in clean hydration.</h2>
+      
+      <div class="specs-grid">
+        
+        <!-- Card 1: Lemon Juice -->
+        <div class="spec-card">
+          <div class="spec-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22a7 7 0 0 0 7-7c0-4.3-7-11-7-11S5 10.7 5 15a7 7 0 0 0 7 7z"/>
+            </svg>
+          </div>
+          <h3>Raw Lemon Juice</h3>
+          <p>Squeezed from organic Eureka lemons. Provides raw Vitamin C, active bioflavonoids, and key alkaline minerals to balance your body's pH levels.</p>
+        </div>
+
+        <!-- Card 2: Mint Extract -->
+        <div class="spec-card">
+          <div class="spec-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+              <path d="M2 17l10 5 10-5"/>
+              <path d="M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <h3>Aromatic Mint Oil</h3>
+          <p>Steam-distilled Peppermint and Spearmint extracts designed to soothe digestion, clear your airways, and deliver a cooling botanical finish.</p>
+        </div>
+
+        <!-- Card 3: Spring Water -->
+        <div class="spec-card">
+          <div class="spec-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+          </div>
+          <h3>Sparkling Spring Water</h3>
+          <p>Sourced from protected alpine springs. Infused with micro-bubbles of carbonation for a champagne-like effervescence and ultra-clean mouthfeel.</p>
+        </div>
+
+        <!-- Card 4: Monk Fruit -->
+        <div class="spec-card">
+          <div class="spec-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+              <line x1="9" y1="9" x2="9.01" y2="9"/>
+              <line x1="15" y1="9" x2="15.01" y2="9"/>
+            </svg>
+          </div>
+          <h3>Zero Added Sugars</h3>
+          <p>Sweetened naturally with trace organic monk fruit extract. Just 10 calories and 2g of natural fruit sugars per serving. Low glycemic index, keto-friendly.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       Footer Section
+       ========================================================================== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-top">
+          <div class="footer-logo">JUICE</div>
+          <ul class="footer-links">
+            <li><a href="#overview">Overview</a></li>
+            <li><a href="#sourcing">Sourcing</a></li>
+            <li><a href="#ingredients">Ingredients</a></li>
+            <li><a href="#privacy">Privacy Policy</a></li>
+          </ul>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2026 JUICE Beverage Co. All rights reserved. JUICE and the JUICE logo are trademarks of JUICE Beverage Corporation.</p>
+          <p>Crafted organically. Sourced sustainably.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
